@@ -4,16 +4,19 @@ namespace TowersOfHanoi
 	public class Game
 	{
 		private const int POSTS = 3;
-		public int blocks;
+		private int blocks;
 		public Block[ , ] game; // [post, blocks]
+        public int moves = 0;
+        public int bestPossibleMoves;
 
 		public Game(int blocks)
 		{
 			this.blocks = blocks;
 			game = new Block[POSTS, blocks];
+            bestPossibleMoves = (int) Math.Pow(2, blocks) - 1;
 
-			//Fill array
-			for (int i = 0; i < blocks; i++)
+            //Fill array
+            for (int i = 0; i < blocks; i++)
 			{
 				if (i == 0)
 				{
@@ -32,12 +35,26 @@ namespace TowersOfHanoi
 
             Block belowTarget = FindTopBlock(targetPost);
 
-            if (belowTarget == null) //If post is empty already
+            //If post is empty already
+            if (belowTarget == null) 
             {
                 game[targetPost, blocks - 1] = movingBlock;
                 game[startPost, movingBlock.blockPos] = null;
                 movingBlock.postPos = targetPost;
                 movingBlock.blockPos = blocks - 1;
+
+                moves++;
+                return true;
+            }
+            //If targetPos + 1 size is greater
+            if (belowTarget.size > movingBlock.size)
+            {
+                game[targetPost, belowTarget.blockPos - 1] = movingBlock;
+                game[startPost, movingBlock.blockPos] = null;
+                movingBlock.postPos = targetPost;
+                movingBlock.blockPos = belowTarget.blockPos - 1;
+
+                moves++;
                 return true;
             }
 
@@ -52,6 +69,15 @@ namespace TowersOfHanoi
                 currentBlock = game[post, i];
             }
             return currentBlock;
+        }
+
+        public bool CheckIfGameWon()
+        {
+            Block block = FindTopBlock(2);
+            if (block == null) return false;
+            if (block.blockPos == 0) return true;
+
+            return false;
         }
 
         public override string ToString()
@@ -76,7 +102,22 @@ namespace TowersOfHanoi
                 for (int j = 0; j < POSTS; j++)
                 {
                     Block currentBlock = game[j, i];
-                    if (currentBlock == null) continue;
+                    if (currentBlock == null) //If null print emtpy post "|"
+                    {
+                        int emptyPostSpaces = (maxBlockSize - 1) / 2;
+                        for (int s = 0; s < emptyPostSpaces; s++)
+                        {
+                            gameStr += " ";
+                        }
+                        
+                        gameStr += "\x1b[37m" + "|";
+
+                        for (int s = 0; s < emptyPostSpaces + 1; s++)
+                        {
+                            gameStr += " ";
+                        }
+                        continue;
+                    }
 
                     int spaces = (maxBlockSize - currentBlock.size) / 2;
 
@@ -111,7 +152,7 @@ namespace TowersOfHanoi
                 }
                 gameStr += (i+1);
             }
-
+            gameStr += "\n\nMoves: " + moves;
             return gameStr;
         }
     }
