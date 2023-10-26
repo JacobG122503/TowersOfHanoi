@@ -5,44 +5,20 @@ namespace TowersOfHanoi
 	{
         public int size;
 		public int postPos, blockPos;
-		private Game game;
+		private string color;
 
-		public Block(Game game, int size, int postPos, int blockPos)
+		public Block(int size, int postPos, int blockPos)
 		{
 			this.size = size;
 			this.postPos = postPos;
 			this.blockPos = blockPos;
-			this.game = game;
-		}
+			color = colorCodes[GetNextColor()];
 
-		public bool TryMove(int targetPost)
-		{
-			Block lowerBlock = null;
-			//Find lower block
-			for (int i = game.blocks-1; i >= 0; i--)
-			{
-				if (game.game[targetPost, i] != null)
-				{
-					lowerBlock = game.game[targetPost, i];
-
-                } 
-			}
-
-			if (lowerBlock == null)
-			{
-				game.game[targetPost, game.blocks - 1] = this;
-				game.game[postPos, blockPos] = null;
-				postPos = targetPost;
-				blockPos = game.blocks - 1;
-				return true;
-			}
-
-			return false;
-		}
+        }
 
 		override public string ToString()
 		{
-			string block = "" + colorCodes[GetNextColor()];
+			string block = "" + color;
 
 			for (int i = 0; i < size; i++)
 			{
@@ -79,7 +55,7 @@ namespace TowersOfHanoi
             "\u001b[94m", // Blue
             "\u001b[92m", // Green
             "\u001b[36m", // DarkCyan
-            "\u001b[97m"  // White
+            //"\u001b[97m"  // White
         };
 
     }

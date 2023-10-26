@@ -17,17 +17,41 @@ namespace TowersOfHanoi
 			{
 				if (i == 0)
 				{
-					game[0, 0] = new Block(this, 1, 0, 0);
+					game[0, 0] = new Block(1, 0, 0);
 					continue;
 				}
-				game[0, i] = new Block(this, game[0, i-1].size + 2, 0, i);
+				game[0, i] = new Block(game[0, i-1].size + 2, 0, i);
 			}
 		}
 
-        public void TestMove()
+        public bool MoveBlock(int startPost, int targetPost)
         {
-            game[0, 0].TryMove(2);
-            this.ToString();
+            //Find top block
+            Block movingBlock = FindTopBlock(startPost);
+            if (movingBlock == null) return false;
+
+            Block belowTarget = FindTopBlock(targetPost);
+
+            if (belowTarget == null) //If post is empty already
+            {
+                game[targetPost, blocks - 1] = movingBlock;
+                game[startPost, movingBlock.blockPos] = null;
+                movingBlock.postPos = targetPost;
+                movingBlock.blockPos = blocks - 1;
+                return true;
+            }
+
+            return false;
+        }
+
+        private Block FindTopBlock(int post)
+        {
+            Block currentBlock = game[post, 0];
+            for (int i = 1; currentBlock == null && i < blocks; i++)
+            {
+                currentBlock = game[post, i];
+            }
+            return currentBlock;
         }
 
         public override string ToString()
@@ -62,15 +86,15 @@ namespace TowersOfHanoi
                     }
 
                     gameStr += currentBlock.ToString();
-
-                    for (int s = 0; s < spaces; s++)
+                    
+                    for (int s = 0; s < spaces + 1; s++)
                     {
                         gameStr += " ";
                     }
                 }
                 gameStr += "\n";
             }
-
+            //Print post numbers
             for (int i = 0; i < 3; i++)
             {
                 int postSpaces;
@@ -83,9 +107,9 @@ namespace TowersOfHanoi
                 }
                 for (int j = 0; j < postSpaces; j++)
                 {
-                    gameStr += " ";
+                    gameStr += "\x1b[37m" + " ";
                 }
-                gameStr += "" + (i+1);
+                gameStr += (i+1);
             }
 
             return gameStr;

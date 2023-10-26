@@ -39,11 +39,21 @@
 
             Game game = new Game(blocks);
 
-            Console.WriteLine(game.ToString());
-
-            game.TestMove();
-            Console.WriteLine("\n\n" + game.ToString());
-            Console.ReadLine();
+            bool playing = true;
+            //Game loop
+            while (playing)
+            {
+                Console.Clear();
+                Console.WriteLine(game.ToString());
+                Console.WriteLine("\x1b[37m \n\n What post would you like to grab a block from?");
+                Console.ForegroundColor = ConsoleColor.Green;
+                int startPost = int.Parse(Console.ReadLine());
+                Console.WriteLine("\x1b[37m What post would you like to move the block to?");
+                Console.ForegroundColor = ConsoleColor.Green;
+                int endPost = int.Parse(Console.ReadLine());
+                Console.Write("\x1b[37m");
+                game.MoveBlock(startPost - 1, endPost - 1);
+            }
         }
     }
 }
