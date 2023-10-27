@@ -73,9 +73,11 @@ namespace TowersOfHanoi
 
         public bool CheckIfGameWon()
         {
-            Block block = FindTopBlock(2);
-            if (block == null) return false;
-            if (block.blockPos == 0) return true;
+            Block block = FindTopBlock(1);
+            if (block != null && block.blockPos == 0) return true;
+
+            block = FindTopBlock(2);
+            if (block != null && block.blockPos == 0) return true;
 
             return false;
         }
